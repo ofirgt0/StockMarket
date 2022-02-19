@@ -20,6 +20,14 @@ namespace Backend
             PercentageDifference=new Stack<double>();
         }
 
-        
+        public Stock(Stock other)
+        {
+            Id = other.Id;
+            Name = other.Name;
+            CurrentPrice = other.CurrentPrice;
+            Amount =other.Amount;
+            CurrentStockAmountInBurse=other.CurrentStockAmountInBurse;
+            PercentageDifference=new Stack<double>(other.PercentageDifference);
+        }
     }
 }

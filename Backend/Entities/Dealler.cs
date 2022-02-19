@@ -1,4 +1,5 @@
 using Backend.Entities;
+using Backend.Helpers;
 
 namespace Backend
 {
@@ -10,14 +11,14 @@ namespace Backend
             Name = name;
             MoneyAtOpening = moneyAtOpening;
             CurrMoney = moneyAtOpening;
-            ownedStocks=new List<Stock>();
+            OwnedStocks=new List<StockWithAmount>();
         }
 
         public int Id { get; set; }
         public string Name { get; set; }
         public double MoneyAtOpening { get; set; }
         public double CurrMoney { get; set; }
-        public List<Stock> ownedStocks { get; set; }
+        public List<StockWithAmount> OwnedStocks { get; set; }
 
         public string toString()
         {

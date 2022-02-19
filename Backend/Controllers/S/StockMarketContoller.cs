@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Backend.Core;
 using System.Collections.Concurrent;
-using static Backend.Entities.OfferTypeEnum;
 using Backend.Helpers;
+using static Backend.Helpers.OfferTypeClass;
 
 namespace Backend.Controllers
 {

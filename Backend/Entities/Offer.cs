@@ -1,4 +1,5 @@
-using static Backend.Entities.OfferTypeEnum;
+
+using static Backend.Helpers.OfferTypeClass;
 
 namespace Backend
 {
