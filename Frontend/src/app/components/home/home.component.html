@@ -1,0 +1,23 @@
+<div >
+    <table class="center">
+        <tr>
+            <th></th>
+            <th>Stock Name</th>
+            <th> Total Amount</th>
+            <th> Current Price</th>
+            <th> latest Price update</th>
+        </tr>
+        
+        <tr *ngFor="let s of stocks" >
+            <td style="width: 10%;"><img src="assets/stocksLogo/{{s.name}}.jpg" width="80%"></td>
+            <td><a>{{s.name}}</a></td>
+            <td><a>{{s.amount}}</a></td>
+            <td [ngClass]="{red:(s.percentageDifference[0]<0),green:(s.percentageDifference[0]>0)}"><a>{{s.currentPrice}}</a></td>
+            <td [ngClass]="{red:(s.percentageDifference[0]<0),green:(s.percentageDifference[0]>0)}"><a>{{s.percentageDifference | slice:0:5 }}</a></td>            
+        </tr>
+    </table>
+</div>
+
+<br>
+<br>
+<br>

@@ -19,7 +19,7 @@ namespace API
             var host = CreateHostBuilder(args).Build();
             using var scope = host.Services.CreateScope();
             var services = scope.ServiceProvider;
-            
+
             var IStockMarketService = services.GetRequiredService<IStockMarket>();
             var IStockMarketManagerService = services.GetRequiredService<IStockMarketManager>();
 

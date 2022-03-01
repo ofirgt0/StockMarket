@@ -1,5 +1,5 @@
-using Backend.Entities;
 using Backend.Helpers;
+using Newtonsoft.Json;
 
 namespace Backend
 {
@@ -11,11 +11,12 @@ namespace Backend
             Name = name;
             MoneyAtOpening = moneyAtOpening;
             CurrMoney = moneyAtOpening;
-            OwnedStocks=new List<StockWithAmount>();
+            OwnedStocks = new List<StockWithAmount>();
         }
 
         public int Id { get; set; }
         public string Name { get; set; }
+        [JsonProperty("money")]
         public double MoneyAtOpening { get; set; }
         public double CurrMoney { get; set; }
         public List<StockWithAmount> OwnedStocks { get; set; }

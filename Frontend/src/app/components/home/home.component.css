@@ -1,0 +1,33 @@
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+  
+  .redBack{
+    background-color: #d45e5e;
+    color: white;
+  }
+  .greenBack{
+    background-color: #2e802e;
+    color: white;
+  }
+  .red{
+    color: #d45e5e;
+    font-weight: bold;
+  }
+  .green{
+    color: #2e802e;
+    font-weight: bold;
+  }
+  .center {
+    margin: auto;
+    width: 60%;
+    padding: 10px;
+  }
