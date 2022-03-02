@@ -1,1 +1,42 @@
-<p>make-adeal works!</p>
+
+<form (ngSubmit)= "onSubmit(f)" #f="ngForm" >
+    <div class="container shadow-lg">
+    <br>
+        <div class="input-group mb-3 container" style="margin-top: 2 px;">
+            <div class="input-group-prepend ">
+                <label class="input-group-text"  for="inputGroupSelect01">I want to</label>
+            </div>
+            <select class="custom-select " id="OfferType" style="display:inline-block;" ngModel name="OfferType" required>
+                <option value="buy" style="display:inline-block;" selected>Choose a deal type...</option>
+                <option value="buy" style="display:inline-block;">Buy</option>
+                <option value="sell" style="display:inline-block;">Sell</option>
+            </select>
+            <select class="custom-select" style="display:inline-block;" id="StockName" ngModel name="StockName" required>
+                <option style="display:inline-block;" selected>Choose Stock...</option>
+                <option value="{{s.name}}" style="display:inline-block;" *ngFor="let s of stocks">{{s.name}}</option>
+            </select>
+            <label class="input-group-text" for="StockName">Stock's</label>
+        
+        </div>
+        <div class="container">
+            <div style="width: 48%;display:inline-block;margin-right: 2%;" class="form-group">
+                <label for="formControlRange">choose amount</label>
+                <mat-slider thumbLabel [displayWith]="formatLabel" tickInterval="1000" step="1000" 
+                min="0" max="100000" aria-label="units" ngModel name="Amount" required></mat-slider>
+            </div>
+            <div style="width: 48%;display:inline-block;" class="form-group">
+                <label for="formControlRange">choose price</label>
+                <mat-slider thumbLabel [displayWith]="formatLabelK" tickInterval="1000" step="1000" 
+                min="0" max="100000" aria-label="units" ngModel name="Price" required></mat-slider>
+            </div>
+        </div>
+        <button type="button" type="submit" [disabled]="!f.valid" 
+        class="btn btn-primary btn-lg btn-block pink">Get Your Deal!</button>
+        <br>
+    </div>
+</form>
+
+<br>
+<br>
+
+  
