@@ -2,9 +2,9 @@ namespace Backend.Helpers
 {
         public enum ActionPerformedType
         {
-            TheTransactionWasFullyExecuted,
-            TheTransactionWasPartiallyExecuted,
-            TheTransactionWasNotExecuted,
+            WasFullyExecuted,
+            WasPartiallyExecuted,
+            WasNotExecuted,
             None
         }
 }

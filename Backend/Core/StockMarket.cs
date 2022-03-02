@@ -11,10 +11,15 @@ namespace Backend
     {
         //private readonly IConfiguration Configuration;
 
-        private const string JSON_PATH = "JSON_PATH";
+        
+        private const string BURSE_PLAYER_NAME = "Burse";
+        private const int BURSE_INIT_AMOUNT = 0;
+        private const int BURSE_INIT_ID = 0;
+
         private readonly object _sellersLocker;
-        public ConcurrentDictionary<string, Offer> BuyingOffer { get; set; }
-        public ConcurrentDictionary<string, Offer> SellingOffer { get; set; }
+        private readonly object _buyerLocker;
+        public ConcurrentDictionary<string, Offer> BuyingOffers { get; set; }
+        public ConcurrentDictionary<string, Offer> SellingOffers { get; set; }
         public List<Dealler> Deallers { get; set; }
         public Dictionary<string, Queue<Deal>> DeallersHistory { get; set; }
         public List<Stock> Stocks { get; set; }
@@ -22,41 +27,34 @@ namespace Backend
 
         public StockMarket(IConfiguration configuration)
         {
-            // Configuration = configuration;
             _sellersLocker = new object();
+            _buyerLocker=new object();
 
-            BuyingOffer = new ConcurrentDictionary<string, Offer>();
-            SellingOffer = new ConcurrentDictionary<string, Offer>();
+            BuyingOffers = new ConcurrentDictionary<string, Offer>();
+            SellingOffers = new ConcurrentDictionary<string, Offer>();
             Deallers = new List<Dealler>();
             Stocks = new List<Stock>();
             DeallersHistory = new Dictionary<string, Queue<Deal>>();
             StocksHistory = new Dictionary<string, Queue<Deal>>();
 
-            var burseData = File.ReadAllText(configuration["CONSTANT:" + JSON_PATH]);
+            var burseData = File.ReadAllText(configuration[Core.ConfigurationManager.CONSTANT + ":" + Core.ConfigurationManager.JSON_PATH]);
             BurseJsonDataHolder temporaryBurseDataObject = JsonConvert.DeserializeObject<BurseJsonDataHolder>(burseData);
             Deallers = temporaryBurseDataObject!.traders;
             Stocks = temporaryBurseDataObject.shares;
 
-            for (int i = 0; i < Deallers.Count(); i++)
-            {
-                DeallersHistory!.TryAdd(Deallers.ElementAt(i).Name, new Queue<Deal>());
-            }
-
-            for (int i = 0; i < Stocks.Count(); i++)
-            {
-                StocksHistory!.TryAdd(Stocks.ElementAt(i).Name, new Queue<Deal>());
-            }
-
+            DeallersHistory=Deallers.ToDictionary(element=>element.Name,element=>new Queue<Deal>());
+            StocksHistory=Stocks.ToDictionary(element=>element.Name,element=>new Queue<Deal>());
+            
             InitBursePlayer();
         }
         public void InitBursePlayer()
         {
-            Dealler burse = new Dealler(0, "Burse", 0);
+            Dealler burse = new Dealler(BURSE_INIT_ID, BURSE_PLAYER_NAME, BURSE_INIT_AMOUNT);
             Deallers!.Add(burse);
             DeallersHistory!.TryAdd(burse.Name, new Queue<Deal>());
             foreach (Stock stock in Stocks)
             {
-                SellingOffer.TryAdd("Burse - " + stock.Name, new Offer
+                SellingOffers.TryAdd(GenerateOfferName(BURSE_PLAYER_NAME,stock.Name), new Offer
                 (burse, stock, stock.CurrentPrice, OfferType.sellingOffer, stock.Amount));
                 AddStockToBuyerOwnedStocks(stock, burse, stock.Amount);
             }
@@ -64,101 +62,55 @@ namespace Backend
 
         public MakeADealResponse MakeADeal(string deallerName, string stockName, double wantedPrice, int wantedAmount, OfferType type)
         {
-            Offer toExcute = new Offer(GetDeallerByName(deallerName), GetStockByName(stockName), wantedPrice, type, wantedAmount);
+            Dealler owner=GetDeallerByName(deallerName);
+            Stock retStock=GetStockByName(stockName);
+            Offer toExcute = new Offer(owner, retStock, wantedPrice, type, wantedAmount);
             MakeADealResponse remainingAmount;
 
-            remainingAmount = toExcute.Type == OfferType.buyingOffer ? 
-                                SearchAndExcuteBuyingOffer(toExcute) : SearchAndExcuteSellingOffer(toExcute);
-
-            RemoveEmptyOffers();
+            remainingAmount = SearchAndExcute(toExcute);
             SetStockCurrentPriceByName(toExcute.Stock, toExcute.WantedPrice);
 
             return remainingAmount;
         }
-        public void RemoveEmptyOffers()
+    
+        public MakeADealResponse SearchAndExcute(Offer toExcute)
         {
-            foreach (var offer in BuyingOffer)
-            {
-                if (offer.Value.OfferStockAmount == 0)
-                    BuyingOffer.Remove(offer.Key, out _);
-            }
-            foreach (var offer in SellingOffer)
-            {
-                if (offer.Value.OfferStockAmount == 0)
-                    SellingOffer.Remove(offer.Key, out _);
-            }
-        }
-        public MakeADealResponse SearchAndExcuteBuyingOffer(Offer toExcute)
-        {
+            ConcurrentDictionary<string, Offer> toSearchOn = (toExcute.Type == OfferType.buyingOffer) ? SellingOffers : BuyingOffers;
+            var relevantLoker=(toExcute.Type == OfferType.buyingOffer) ? _sellersLocker:_buyerLocker;
             int oldAmount = toExcute.OfferStockAmount;
-            lock (_sellersLocker)
+            
+            lock (relevantLoker)
             {
-                IEnumerable<KeyValuePair<string, Offer>> filterOffers = SellingOffer
+                IEnumerable<KeyValuePair<string, Offer>> filterOffers = toSearchOn
                 .Where(offer => (offer.Value.Stock.Id == toExcute.Stock.Id &&
                 toExcute.WantedPrice >= offer.Value.WantedPrice));
                 if (filterOffers != null)
-                {
-                    foreach (var offer in filterOffers)
-                    {
-                        if (toExcute.OfferStockAmount == 0)
-                            break;
-
-                        if (toExcute.OfferStockAmount < offer.Value.OfferStockAmount)
-                        {
-                            offer.Value.OfferStockAmount -= toExcute.OfferStockAmount;
-                            TransferPropertiesBetweenDealers(offer.Value.Owner.Name, toExcute.Owner.Name, Math.Min(toExcute.WantedPrice, offer.Value.WantedPrice), toExcute.OfferStockAmount, toExcute.Stock.Name);
-                            UpdateHistory(toExcute, offer.Value.Owner, false);
-                            toExcute.OfferStockAmount = 0;
-                        }
-                        else
-                        {
-                            toExcute.OfferStockAmount -= offer.Value.OfferStockAmount;
-                            TransferPropertiesBetweenDealers(offer.Value.Owner.Name, toExcute.Owner.Name, Math.Min(toExcute.WantedPrice, offer.Value.WantedPrice), offer.Value.OfferStockAmount, toExcute.Stock.Name);
-                            UpdateHistory(toExcute, offer.Value.Owner, false);
-                            offer.Value.OfferStockAmount = 0;
-                        }
-                    }
-                }
+                    RelevantOfferHandler(toExcute,filterOffers,toSearchOn);   
             }
+
             if (toExcute.OfferStockAmount > 0)
             {
-                BuyingOffer.TryAdd(GenerateOfferName(toExcute.Owner.Name, toExcute.Stock.Name), toExcute);
+                BuyingOffers.TryAdd(GenerateOfferName(toExcute.Owner.Name, toExcute.Stock.Name), toExcute);
             }
             return new MakeADealResponse(toExcute.OfferStockAmount, oldAmount);
         }
-        public MakeADealResponse SearchAndExcuteSellingOffer(Offer toExcute)
+        private void RelevantOfferHandler(Offer toExcute,IEnumerable<KeyValuePair<string, Offer>> filterOffers,ConcurrentDictionary<string, Offer> toSearchOn)
         {
-            int oldAmount = toExcute.OfferStockAmount;
-            lock (BuyingOffer)
+            int diffrence=0;
+            foreach (var offer in filterOffers)
             {
-                IEnumerable<KeyValuePair<string, Offer>> filterOffers = BuyingOffer
-                .Where(offer => (offer.Value.Stock.Id == toExcute.Stock.Id &&
-                toExcute.WantedPrice <= offer.Value.WantedPrice));
-                foreach (var offer in filterOffers)
-                {
-                    if (toExcute.OfferStockAmount == 0)
-                        break;
-                    if (toExcute.OfferStockAmount < offer.Value.OfferStockAmount)
-                    {
-                        offer.Value.OfferStockAmount -= toExcute.OfferStockAmount;
-                        TransferPropertiesBetweenDealers(toExcute.Owner.Name, offer.Value.Owner.Name, Math.Min(toExcute.WantedPrice, offer.Value.WantedPrice), toExcute.OfferStockAmount, toExcute.Stock.Name);
-                        UpdateHistory(toExcute, offer.Value.Owner, true);
-                        toExcute.OfferStockAmount = 0;
-                    }
-                    else
-                    {
-                        toExcute.OfferStockAmount -= offer.Value.OfferStockAmount;
-                        TransferPropertiesBetweenDealers(toExcute.Owner.Name, offer.Value.Owner.Name, Math.Min(toExcute.WantedPrice, offer.Value.WantedPrice), offer.Value.OfferStockAmount, toExcute.Stock.Name);
-                        UpdateHistory(toExcute, offer.Value.Owner, true);
-                        offer.Value.OfferStockAmount = 0;
-                    }
-                }
+                if (toExcute.OfferStockAmount == 0)
+                    break;
+                
+                diffrence = Math.Abs(toExcute.OfferStockAmount - offer.Value.OfferStockAmount);
+                offer.Value.OfferStockAmount -= diffrence;
+                toExcute.OfferStockAmount-=diffrence;
+                if(offer.Value.OfferStockAmount==0) toSearchOn.TryRemove(offer); 
+
+                TransferPropertiesBetweenDealers(offer.Value.Owner.Name, toExcute.Owner.Name, Math.Min(toExcute.WantedPrice, offer.Value.WantedPrice), toExcute.OfferStockAmount, toExcute.Stock.Name);
+                UpdateHistory(toExcute, offer.Value.Owner, false);
+                toExcute.OfferStockAmount = 0;
             }
-            if (toExcute.OfferStockAmount > 0)
-            {
-                SellingOffer.TryAdd(GenerateOfferName(toExcute.Owner.Name, toExcute.Stock.Name), toExcute);
-            }
-            return new MakeADealResponse(toExcute.OfferStockAmount, oldAmount);
         }
         public void TransferPropertiesBetweenDealers(string deallerSrcName, string deallerDstName, double moneyDifference, int amountDifference, string stockName)
         {
@@ -181,29 +133,22 @@ namespace Backend
                 dstDealler.OwnedStocks.Add(new StockWithAmount(relevantSrcStock.Stock, amountDifference));
             }
         }
+
         public void RemoveOffer(Offer toRemove)
         {
             if (toRemove.Type == OfferType.buyingOffer)
-                BuyingOffer.Remove(GenerateOfferName(toRemove.Owner.Name, toRemove.Stock.Name), out _);
+                BuyingOffers.Remove(GenerateOfferName(toRemove.Owner.Name, toRemove.Stock.Name), out _);
             else
-                SellingOffer.Remove(GenerateOfferName(toRemove.Owner.Name, toRemove.Stock.Name), out _);
+                SellingOffers.Remove(GenerateOfferName(toRemove.Owner.Name, toRemove.Stock.Name), out _);
         }
-        public bool IsValidDeal(Dealler dealler, Offer offerToCheck)
-        {
-            if (offerToCheck.Type == OfferType.sellingOffer &&
-            offerToCheck.Owner.OwnedStocks.FirstOrDefault(s => s.Stock.Name == offerToCheck.Stock.Name) != null)
-                return (dealler.CurrMoney > offerToCheck.WantedPrice);
 
-            if (offerToCheck.Type == OfferType.buyingOffer)
-                return (dealler.OwnedStocks.FirstOrDefault(s => s.Stock.Name == offerToCheck.Stock.Name) != null);
-            return false;
-        }
         public void SetStockCurrentPriceByName(Stock stock, double price)
         {
             double percentageDifference = (stock.CurrentPrice > price) ? (stock.CurrentPrice / price) : (-1 * (price / stock.CurrentPrice));
             stock.CurrentPrice = price;
             stock.PercentageDifference.Push(percentageDifference);
         }
+
         public void UpdateHistory(Offer offerToAdd, Dealler dealler, bool deallerIsBuyer)
         {
             Deal deal;
@@ -225,15 +170,24 @@ namespace Backend
 
             else dealler.OwnedStocks.Add(new StockWithAmount(stockToAdd, amount));
         }
-        public bool InsertOffer(Offer toAdd)
+        public bool InsertOffer(string deallerName, string stockName, double wantedPrice, int amount, string type)
         {
+
+            Offer toAdd = BuildOffer(deallerName, stockName, wantedPrice, amount, type);
             if (!IsValidOffer(toAdd))
                 return false;
             if (toAdd.Type == OfferType.buyingOffer)
-                BuyingOffer.TryAdd(GenerateOfferName(toAdd.Owner.Name, toAdd.Stock.Name), toAdd);
+                BuyingOffers.TryAdd(GenerateOfferName(toAdd.Owner.Name, toAdd.Stock.Name), toAdd);
             else
-                SellingOffer.TryAdd(GenerateOfferName(toAdd.Owner.Name, toAdd.Stock.Name), toAdd);
+                SellingOffers.TryAdd(GenerateOfferName(toAdd.Owner.Name, toAdd.Stock.Name), toAdd);
             return true;
+        }
+        private Offer BuildOffer(string deallerName, string stockName, double wantedPrice, int amount, string type)
+        {
+            Dealler activeDealler = GetDeallerByName(deallerName);
+            Stock SellingOffertock = GetStockByName(stockName);
+            OfferType offerType = (type == "buyingOffer") ? OfferType.buyingOffer : OfferType.sellingOffer;
+            return new Offer(activeDealler, SellingOffertock, wantedPrice, offerType, amount);
         }
         public string GenerateOfferName(string ownerName, string stockName)
         {
@@ -242,23 +196,23 @@ namespace Backend
         public Offer GetOfferByName(string offerName)
         {
             Offer res;
-            if (BuyingOffer.TryGetValue(offerName, out res!) || SellingOffer.TryGetValue(offerName, out res!))
+            if (BuyingOffers.TryGetValue(offerName, out res!) || SellingOffers.TryGetValue(offerName, out res!))
                 return res;
             return null!;
         }
         public Dealler GetDeallerByName(string deallerName)
         {
-            return this.Deallers.FirstOrDefault(d => d.Name == deallerName);
+            return Deallers.FirstOrDefault(d => d.Name == deallerName);
         }
         public Stock GetStockByName(string stockName)
         {
-            return this.Stocks.FirstOrDefault(d => d.Name == stockName);
+            return Stocks.FirstOrDefault(d => d.Name == stockName);
         }
         public bool IsValidOffer(Offer toCheck)
         {
             var a = GenerateOfferName(toCheck.Owner.Name, toCheck.Stock.Name);
-            return !this.BuyingOffer.ContainsKey(a) &&
-                    !this.SellingOffer.ContainsKey(a);
+            return !BuyingOffers.ContainsKey(a) &&
+                    !SellingOffers.ContainsKey(a);
         }
         public Stock GetStockById(int id)
         {
@@ -266,7 +220,26 @@ namespace Backend
         }
         public Dealler GetDeallerById(int id)
         {
-            return this.Deallers.FirstOrDefault(d => d.Id == id);
+            return Deallers.FirstOrDefault(d => d.Id == id);
+        }
+        public void UpdateOffers(){
+            double latestStockValueUpdate;
+            lock(_buyerLocker)
+            {
+                foreach (KeyValuePair<string, Offer> offer in BuyingOffers)
+                {
+                    latestStockValueUpdate = offer.Value.Stock.PercentageDifference.Peek();
+                    offer.Value.WantedPrice += (latestStockValueUpdate * offer.Value.WantedPrice) / 100;
+                }
+            }
+            lock(_sellersLocker)
+            {
+                foreach (KeyValuePair<string, Offer> offer in SellingOffers)
+                {
+                    latestStockValueUpdate = offer.Value.Stock.PercentageDifference.Peek();
+                    offer.Value.WantedPrice += (latestStockValueUpdate * offer.Value.WantedPrice) / 100;
+                }
+            }
         }
     }
 }

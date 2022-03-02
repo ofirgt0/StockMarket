@@ -16,7 +16,7 @@ export class DeallerComponent implements OnInit {
   constructor(private deallerServ:DeallerManageService) { }
 
   ngOnInit(): void {
-    console.log(this.deallerServ.getDeallers());
+    
   }
 
 }

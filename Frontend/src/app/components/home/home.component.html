@@ -12,8 +12,8 @@
             <td style="width: 10%;"><img src="assets/stocksLogo/{{s.name}}.jpg" width="80%"></td>
             <td><a>{{s.name}}</a></td>
             <td><a>{{s.amount}}</a></td>
-            <td [ngClass]="{red:(s.percentageDifference[0]<0),green:(s.percentageDifference[0]>0)}"><a>{{s.currentPrice}}</a></td>
-            <td [ngClass]="{red:(s.percentageDifference[0]<0),green:(s.percentageDifference[0]>0)}"><a>{{s.percentageDifference | slice:0:5 }}</a></td>            
+            <td [ngClass]="{red:(s.percentageDifference[0]<0),green:(s.percentageDifference[0]>0)}"><a>{{s.currentPrice| number : '1.2-2'}}</a></td>
+            <td [ngClass]="{red:(s.percentageDifference[0]<0),green:(s.percentageDifference[0]>0)}"><a>{{s.percentageDifference | slice:0:5}}</a></td>            
         </tr>
     </table>
 </div>

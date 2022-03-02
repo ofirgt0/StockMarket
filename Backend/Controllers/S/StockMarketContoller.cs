@@ -3,6 +3,7 @@ using Backend.Core;
 using System.Collections.Concurrent;
 using Backend.Helpers;
 using static Backend.Helpers.OfferTypeClass;
+using Backend.Entities;
 
 namespace Backend.Controllers
 {
@@ -57,30 +58,25 @@ namespace Backend.Controllers
         [HttpGet("offers/buying")]
         public async Task<ActionResult<ConcurrentDictionary<string, Offer>>> GetBuyingOffersAsync()
         {
-            return _stockMarketData.BuyingOffer;
+            return _stockMarketData.BuyingOffers;
         }
 
         [HttpGet("offers/selling")]
         public async Task<ActionResult<ConcurrentDictionary<string, Offer>>> GetSellingOffersAsync()
         {
-            return _stockMarketData.SellingOffer;
+            return _stockMarketData.SellingOffers;
         }
 
         [HttpPost("offers/newOffer")]
-        public async Task<ActionResult<Offer>> NewOfferAsync(string deallerName, string stockName, double wantedPrice, int amount, string type)
+        public async Task<ActionResult<bool>> NewOfferAsync([FromBody] RequestBodyParams bodyParams)
         {
-            Dealler activeDealler = _stockMarketData.GetDeallerByName(deallerName);
-            Stock SellingOffertock = _stockMarketData.GetStockByName(stockName);
-            OfferType offerType = (type == "buyingOffer") ? OfferType.buyingOffer : OfferType.sellingOffer;
-            Offer newOffer = new Offer(activeDealler, SellingOffertock, wantedPrice, offerType, amount);
-
-            return (_stockMarketData.InsertOffer(newOffer)) ? Ok(newOffer) : NotFound(404);
+            return (_stockMarketData.InsertOffer(bodyParams.deallerName, bodyParams.stockName, bodyParams.wantedPrice, bodyParams.wantedAmount, bodyParams.type));
         }
 
         [HttpPost("offers/makeADeal")]
-        public async Task<ActionResult<MakeADealResponse>> MakeADealAsync(string deallerName, string stockName, double wantedPrice, int wantedAmount, string type)
+        public async Task<ActionResult<MakeADealResponse>> MakeADealAsync([FromBody] RequestBodyParams bodyParams)
         {
-            return _stockMarketData.MakeADeal(deallerName, stockName, wantedPrice, wantedAmount, OfferTypeClass.getType(type));
+            return _stockMarketData.MakeADeal(bodyParams.deallerName, bodyParams.stockName, bodyParams.wantedPrice, bodyParams.wantedAmount, OfferTypeClass.getType( bodyParams.type));
         }
 
     }

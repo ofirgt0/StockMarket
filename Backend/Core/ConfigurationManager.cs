@@ -2,9 +2,9 @@ namespace Backend.Core
 {
     public class ConfigurationManager
     {
-        public const string Constant = "CONSTANT";
-
-        public string TradingDay { get; set; } = String.Empty;
-        public string JsonPath { get; set; } = String.Empty;
+        public const string CONSTANT = "CONSTANT";
+        public const string JSON_PATH = "JSON_PATH";
+        public const string TRADING_DAY="TRADING_DAY";
+        
     }
 }

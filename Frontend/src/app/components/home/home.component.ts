@@ -9,15 +9,14 @@ import { stock } from 'src/entities.model';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  stocksSub = new Subject<stock[]>();
-  stocksObs = this.stocksSub.asObservable();
+  
   stocks:stock[]=[];
   constructor(private accessService:ServerAccessService) { }
   
-  ngOnInit(): void {
-    setInterval(() => {
-      this.accessService.getStocks().subscribe(resStocks=>{this.stocks=resStocks});}, 1000);
-    this.accessService.getStocks().subscribe(resStocks=>{this.stocks=resStocks});
+  async ngOnInit(): Promise<void> {
+    setInterval(async () => {
+      (await this.accessService.getStocks()).subscribe(resStocks=>{this.stocks=resStocks});}, 1000);
+      (await this.accessService.getStocks()).subscribe(resStocks=>{this.stocks=resStocks});
 
     console.log(this.stocks);
   }

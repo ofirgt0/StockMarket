@@ -7,8 +7,8 @@ namespace Backend.Core
 {
     public interface IStockMarket
     {
-        public ConcurrentDictionary<string, Offer> BuyingOffer { get; set; }
-        public ConcurrentDictionary<string, Offer> SellingOffer { get; set; }
+        public ConcurrentDictionary<string, Offer> BuyingOffers { get; set; }
+        public ConcurrentDictionary<string, Offer> SellingOffers { get; set; }
         public List<Dealler> Deallers { get; set; }
         public Dictionary<string, Queue<Deal>> DeallersHistory { get; set; }
         public List<Stock> Stocks { get; set; }
@@ -16,11 +16,9 @@ namespace Backend.Core
 
         public void InitBursePlayer();
 
-        public bool InsertOffer(Offer toAdd);
+        public bool InsertOffer(string deallerName, string stockName, double wantedPrice, int amount, string type);
 
         public void RemoveOffer(Offer toRemove);
-
-        public bool IsValidOffer(Offer toCheck);
 
         public Offer GetOfferByName(string offerName);
 
@@ -34,9 +32,9 @@ namespace Backend.Core
 
         public void UpdateHistory(Offer offerToAdd, Dealler dealler, bool deallerIsBuyer);
 
-        public bool IsValidDeal(Dealler dealler, Offer offerToCheck);
         public Stock GetStockById(int id);
         public Dealler GetDeallerById(int id);
+        public void UpdateOffers();
 
     }
 }

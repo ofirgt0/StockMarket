@@ -13,11 +13,11 @@ namespace Backend.Helpers
         public MakeADealResponse(int quantityRemaining, int oldAmount)
         {
             if (quantityRemaining == 0)
-                Action = ActionPerformedType.TheTransactionWasFullyExecuted;
+                Action = ActionPerformedType.WasFullyExecuted;
             if (quantityRemaining < oldAmount)
-                Action = ActionPerformedType.TheTransactionWasPartiallyExecuted;
+                Action = ActionPerformedType.WasPartiallyExecuted;
             else
-                Action = ActionPerformedType.TheTransactionWasNotExecuted;
+                Action = ActionPerformedType.WasNotExecuted;
 
             QuantityRemaining = quantityRemaining;
         }

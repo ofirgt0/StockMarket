@@ -1,5 +1,5 @@
 
-using static Backend.Helpers.OfferTypeClass;
+using Backend.Helpers;
 
 namespace Backend
 {

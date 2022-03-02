@@ -8,7 +8,7 @@ import { ServerAccessService } from '../services/server-access.service';
 })
 export class AuthComponent implements OnInit {
   isAuth=false;
-  authProb=false;
+  authProblem=false;
   constructor(private aServ:ServerAccessService) { }
   
   async ngOnInit(): Promise<void> {
@@ -18,12 +18,12 @@ export class AuthComponent implements OnInit {
     this.isAuth=false;
     this.aServ.updateAuthStatus(this.isAuth);
   }
-  deallerLogin(id:any)
+  async deallerLogin(id:any)
   {
-    console.log(id)
-    this.aServ.onLogin(id).then(res=>this.isAuth);
+    console.log(id);
+    (await this.aServ.onLogin(id)).subscribe(data=>{this.isAuth=data!=null});
     console.log(this.isAuth)
-    this.authProb=!this.isAuth; 
+    this.authProblem=!this.isAuth; 
 
     this.aServ.updateAuthStatus(this.isAuth);
   }

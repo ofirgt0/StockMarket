@@ -13,19 +13,19 @@ export class ServerAccessService {
   dealler!: dealler;
   isAuth=false;
   constructor(private http: HttpClient) {
+
     this.deallers=this.http.get<dealler[]>("http://localhost:5187/deallers");
     this.stocks=this.http.get<stock[]>("http://localhost:5187/stocks"); 
 
-    timer(0, 1000*timeIntevalSeconds).pipe( 
-      map(() => { 
-        this.initProperties(); 
-        
-        this.stocks.subscribe(resStocks=>{console.log(resStocks)});
-      }) 
-    ).subscribe(); 
+    // timer(0, 1000*timeIntevalSeconds).pipe( 
+    //   map(() => { 
+    //     this.initProperties(); 
+    //     this.stocks.subscribe();
+    //   }) 
+    // ).subscribe(); 
     
   }
-
+  
   updateAuthStatus(currentStatus:boolean)
   {
     this.isAuth=currentStatus;
@@ -33,8 +33,9 @@ export class ServerAccessService {
 
   async onLogin(id:number)
   {
-    await this.http.get<dealler>("http://localhost:5187/dealler/"+id).subscribe(d=>{this.dealler=d});
-    return this.dealler!=null;
+    
+  
+    return await this.http.get<dealler>("http://localhost:5187/dealler/"+id);
   }
 
   initProperties(){
@@ -45,7 +46,8 @@ export class ServerAccessService {
   {
     return this.deallers;
   }
-  getStocks(){
+  async getStocks(){
+    await this.stocks.subscribe();
     return this.stocks;
   }
 }
