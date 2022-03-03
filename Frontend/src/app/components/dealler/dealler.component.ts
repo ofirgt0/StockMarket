@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { DeallerManageService } from 'src/app/services/dealler-manage.service';
 import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrService } from 'ngx-toastr';
+import { ServerAccessService } from 'src/app/services/server-access.service';
 
 
 
@@ -13,7 +13,10 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class DeallerComponent implements OnInit {
 
-  constructor(private deallerServ:DeallerManageService) { }
+  constructor(private accessService:ServerAccessService) { 
+    accessService
+  }
+
 
   ngOnInit(): void {
     

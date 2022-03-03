@@ -20,6 +20,7 @@ namespace Backend
         public double MoneyAtOpening { get; set; }
         public double CurrMoney { get; set; }
         public List<StockWithAmount> OwnedStocks { get; set; }
+        public int OwnedStocksAmount{ get; set; }
 
         public string toString()
         {

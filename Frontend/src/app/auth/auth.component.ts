@@ -9,6 +9,7 @@ import { ServerAccessService } from '../services/server-access.service';
 export class AuthComponent implements OnInit {
   isAuth=false;
   authProblem=false;
+  deallerName=""
   constructor(private aServ:ServerAccessService) { }
   
   async ngOnInit(): Promise<void> {
@@ -21,11 +22,17 @@ export class AuthComponent implements OnInit {
   async deallerLogin(id:any)
   {
     console.log(id);
-    (await this.aServ.onLogin(id)).subscribe(data=>{this.isAuth=data!=null});
-    console.log(this.isAuth)
-    this.authProblem=!this.isAuth; 
-
-    this.aServ.updateAuthStatus(this.isAuth);
+    (await this.aServ.onLogin(id)).subscribe(data=>{
+      this.isAuth=data!=null;
+      this.deallerName=data.name;
+      if(this.isAuth){
+        this.aServ.updateAuthDeallerName(this.deallerName);
+        this.aServ.updateAuthStatus(this.isAuth);
+      }
+      else
+        this.authProblem=!this.isAuth; 
+    });
+    
   }
 
 }

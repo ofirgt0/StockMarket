@@ -118,10 +118,13 @@ namespace Backend
             Dealler dstDealler = GetDeallerByName(deallerDstName);
 
             srcDealler.CurrMoney += moneyDifference * amountDifference;
+            srcDealler.OwnedStocksAmount-=Math.Abs(amountDifference);
             dstDealler.CurrMoney -= moneyDifference * amountDifference;
+            dstDealler.OwnedStocksAmount+=amountDifference;
+            
             StockWithAmount relevantSrcStock = srcDealler.OwnedStocks.FirstOrDefault(s => s.Stock.Name == stockName);
             StockWithAmount relevantDstStock = dstDealler.OwnedStocks.FirstOrDefault(s => s.Stock.Name == stockName);
-
+            
             if (relevantDstStock != null)
             {
                 relevantSrcStock.decreaseAmountSafely(amountDifference);
@@ -169,6 +172,7 @@ namespace Backend
             if (temporaryStockToCheck != null) temporaryStockToCheck.increaseAmountSafely(amount);
 
             else dealler.OwnedStocks.Add(new StockWithAmount(stockToAdd, amount));
+            dealler.OwnedStocksAmount+=amount;
         }
         public bool InsertOffer(string deallerName, string stockName, double wantedPrice, int amount, string type)
         {
@@ -211,6 +215,11 @@ namespace Backend
         public bool IsValidOffer(Offer toCheck)
         {
             var a = GenerateOfferName(toCheck.Owner.Name, toCheck.Stock.Name);
+            StockWithAmount generateObjToCheck=new StockWithAmount(toCheck.Stock,toCheck.OfferStockAmount);
+            if(toCheck.Type==OfferType.buyingOffer&&toCheck.Owner.CurrMoney<toCheck.WantedPrice)
+                return false;
+            else if(!toCheck.Owner.OwnedStocks.Contains(generateObjToCheck))
+                return false;
             return !BuyingOffers.ContainsKey(a) &&
                     !SellingOffers.ContainsKey(a);
         }

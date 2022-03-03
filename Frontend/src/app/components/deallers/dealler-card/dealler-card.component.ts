@@ -14,7 +14,12 @@ export class DeallerCardComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     await this.accessService.getDeallers().subscribe(resDealler=>{this.deallers=resDealler});
-  }
+    setInterval(async () => {
+      (await this.accessService.getDeallers().subscribe(resDealler=>{this.deallers=resDealler}));
+      
+    }, 1000);
+    }
+}
   
 
-}
+

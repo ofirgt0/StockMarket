@@ -14,7 +14,9 @@ import { AuthComponent } from './auth/auth.component';
 import { DeallerCardComponent } from './components/deallers/dealler-card/dealler-card.component';
 import { RoundBigNumbersPipe } from './Pipes/RoundBigNumbers';
 import { MakeADealComponent } from './components/home/make-adeal/make-adeal.component';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatSliderModule } from '@angular/material/slider';
+import { ChartComponent } from './components/home/chart/chart.component';
 
 const appRoutes: Routes = [
   {path:'' , component: HomeComponent},
@@ -26,6 +28,7 @@ const appRoutes: Routes = [
 @NgModule({
   declarations: [
     AppComponent,
+    
     RoundBigNumbersPipe,
     DeallerComponent,
     MenuComponent,
@@ -33,11 +36,17 @@ const appRoutes: Routes = [
     DeallersComponent,
     AuthComponent,
     DeallerCardComponent,
-    MakeADealComponent    
+    MakeADealComponent,
+    ChartComponent,
+             
   ],
   imports: [
     BrowserModule,
+    FormsModule,
+    BrowserAnimationsModule,
     HttpClientModule,
+    MatSliderModule,
+ 
     AppRoutingModule,
     RouterModule.forRoot(appRoutes)
   ],
