@@ -1,7 +1,7 @@
 
 <form (ngSubmit)= "onSubmit(f)" #f="ngForm" >
     <div class="container shadow-lg">
-    <br>
+        <br>
         <div class="input-group mb-3 container" style="margin-top: 2 px;">
             <div class="input-group-prepend ">
                 <label class="input-group-text"  for="inputGroupSelect01">I want to</label>
@@ -21,8 +21,8 @@
         <div class="container">
             <div style="width: 48%;display:inline-block;margin-right: 2%;" class="form-group">
                 <label for="formControlRange">choose amount</label>
-                <mat-slider thumbLabel [displayWith]="formatLabel" tickInterval="1000" step="1000" 
-                min="0" max="100000" aria-label="units" ngModel name="Amount" required></mat-slider>
+                <mat-slider thumbLabel [displayWith]="formatLabel" tickInterval="100" step="1" 
+                min="0" max="100" aria-label="units" ngModel name="Amount" required></mat-slider>
             </div>
             <div style="width: 48%;display:inline-block;" class="form-group">
                 <label for="formControlRange">choose price</label>
@@ -31,12 +31,15 @@
             </div>
         </div>
         <button type="button" type="submit" [disabled]="!f.valid" 
-        class="btn btn-primary btn-lg btn-block pink">Get Your Deal!</button>
+        class="btn btn-primary btn-lg btn-block pink" >Get Your Deal!</button>
+        <br>
         <br>
     </div>
 </form>
 
 <br>
 <br>
+<br>
+
 
   

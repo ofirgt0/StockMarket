@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ServerAccessService } from '../services/server-access.service';
+import { BackendAccessService } from '../services/BackendAccess.service';
 
 @Component({
   selector: 'app-auth',
@@ -10,7 +10,7 @@ export class AuthComponent implements OnInit {
   isAuth=false;
   authProblem=false;
   deallerName=""
-  constructor(private aServ:ServerAccessService) { }
+  constructor(private aServ:BackendAccessService) { }
   
   async ngOnInit(): Promise<void> {
     this.aServ.updateAuthStatus(await this.isAuth);

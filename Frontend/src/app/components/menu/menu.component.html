@@ -1,6 +1,5 @@
 <div class="shadow p-3 mb-5 bg-white rounded" style="background-color: white;">
     <div *ngIf="!isAuth">
-        <div *ngIf="authProblem" style="color:red;float:right;">dealler doesn't exist. try again</div>
         <div class="input-group mb-3" style="width: 30%; float: right;margin-top: 0.5%;">
             <div class="input-group-prepend">
                 <button (click)="deallerLogin(deallerId.value)" class="button-67" >Dealler ID</button>
@@ -12,18 +11,19 @@
     <div *ngIf="isAuth" style="float: right; margin-right: 5%">
         <div class="input-group mb-3" style="width: 30%; float: right;margin-top: 0.5%;">
             <div  class="input-group-prepend" style="float: right;">
-            <button class="button-67" style="float: right;" (click)="Logout()" role="button">Logout</button>
+        <br>
+            <button class="button-67 shadow" style="float: right;" (click)="Logout()" role="button">Logout</button>
             </div>
         </div>
     </div>
     <nav class="navbar navbar-expand-lg navbar-light"  >
-        <img src='assets/stockmarket-logo.png' width="15%" style="margin-right:2%;">
+        <img routerLink="/" src='assets/stockmarket-logo.png' class=" shadow" width="15%" style="margin-right:2%;cursor: pointer;">
         <div class="collapse navbar-collapse" id="navbarNav" >
             <ul class="navbar-nav" style="font-size: 120%; ">
                 <li style="background-color: white;" class="nav-item"><a routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" routerLink="/" class="nav-link" >Home</a></li>
                 <li class="nav-item"><a routerLinkActive="active" routerLink="/deallers" class="nav-link">deallers</a></li>
                 <li class="nav-item"><a routerLinkActive="active" routerLink="/dealler" class="nav-link" *ngIf="isAuth">
-                    <img src="assets/deallerAvatar/{{deallerName}}.png" class="rounded-circle" width="23"> {{deallerName}}'s profile</a></li>
+                <img src="assets/deallerAvatar/{{deallerName}}.png" class="rounded-circle" width="23"> {{deallerName}}'s profile</a></li>
             </ul>
         </div>
     </nav>

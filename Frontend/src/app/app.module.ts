@@ -17,6 +17,9 @@ import { MakeADealComponent } from './components/home/make-adeal/make-adeal.comp
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSliderModule } from '@angular/material/slider';
 import { ChartComponent } from './components/home/chart/chart.component';
+import { NgbToastModule } from  'ngb-toast';
+import { ToastrModule } from 'ngx-toastr';
+import { DateAsAgoPipe } from './Pipes/dateAsAgo';
 
 const appRoutes: Routes = [
   {path:'' , component: HomeComponent},
@@ -28,8 +31,8 @@ const appRoutes: Routes = [
 @NgModule({
   declarations: [
     AppComponent,
-    
     RoundBigNumbersPipe,
+    DateAsAgoPipe,
     DeallerComponent,
     MenuComponent,
     HomeComponent,
@@ -38,6 +41,7 @@ const appRoutes: Routes = [
     DeallerCardComponent,
     MakeADealComponent,
     ChartComponent,
+    
              
   ],
   imports: [
@@ -46,7 +50,7 @@ const appRoutes: Routes = [
     BrowserAnimationsModule,
     HttpClientModule,
     MatSliderModule,
- 
+    NgbToastModule,
     AppRoutingModule,
     RouterModule.forRoot(appRoutes)
   ],

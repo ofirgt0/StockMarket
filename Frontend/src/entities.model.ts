@@ -24,3 +24,25 @@ export interface Offer {
   wantedAmount: number;
   type: number;
 }
+
+export interface Deal{
+  seller:string;
+  buyer :string;
+  price:number;
+  amount:number;
+  stockName:string;
+  dealTime:any;
+}
+export enum ActionPerformedType
+{
+    WasFullyExecuted,
+    WasPartiallyExecuted,
+    WasNotExecutedNewOfferHasUploaded,
+    WasNotExecutedOfferNotPossible
+}
+export interface MakeADealResponse
+{
+    QuantityRemaining:number;
+    action:ActionPerformedType ;
+}
+

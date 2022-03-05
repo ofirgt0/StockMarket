@@ -4,6 +4,7 @@ namespace Backend.Helpers
     {
         public StockWithAmount(Stock ownedStock, int amount)
         {
+            _amountLocker=new object();
             Stock = new Stock(ownedStock);
             _amount = amount;
         }
@@ -11,16 +12,19 @@ namespace Backend.Helpers
         public Stock Stock { get; set; }
         public int Amount { get { return _amount; } }
         private int _amount;
-
+        private readonly object _amountLocker;
         public void decreaseAmountSafely(int amount)
         {
-            Interlocked.Increment(ref _amount);
-            _amount -= amount;
+            lock(_amountLocker){
+                _amount -= amount;
+            }
+            
         }
         public void increaseAmountSafely(int amount)
         {
-            Interlocked.Increment(ref _amount);
-            _amount += amount;
+             lock(_amountLocker){
+                _amount += amount;
+            }
         }
     }
 }

@@ -76,9 +76,19 @@ namespace Backend.Controllers
         [HttpPost("offers/makeADeal")]
         public async Task<ActionResult<MakeADealResponse>> MakeADealAsync([FromBody] RequestBodyParams bodyParams)
         {
-            Console.WriteLine("dfdfdf - " + bodyParams.type);
-            return _stockMarketData.MakeADeal(bodyParams.deallerName, bodyParams.stockName, bodyParams.wantedPrice, bodyParams.wantedAmount, OfferTypeClass.getType( bodyParams.type));
+
+            MakeADealResponse ret = _stockMarketData.MakeADeal(bodyParams.deallerName, bodyParams.stockName, bodyParams.wantedPrice, bodyParams.wantedAmount, OfferTypeClass.getType(bodyParams.type));
+            Console.WriteLine("ret - " + ret.Action);
+            return ret;
         }
+        [HttpGet("deals/{name}")]
+        public async Task<ActionResult<List<Deal>>> GetDeallerDeals(string name)
+        {
+            List<Deal> ret = _stockMarketData.GetDeallerDeals(name);
+            
+            return ret;
+        }
+
 
     }
 }

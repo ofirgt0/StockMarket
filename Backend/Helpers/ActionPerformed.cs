@@ -4,7 +4,8 @@ namespace Backend.Helpers
         {
             WasFullyExecuted,
             WasPartiallyExecuted,
-            WasNotExecuted,
-            None
+            WasNotExecutedNewOfferHasUploaded,
+            WasNotExecutedOfferNotPossible
+            
         }
 }
