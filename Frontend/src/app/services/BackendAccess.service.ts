@@ -41,7 +41,7 @@ export class BackendAccessService {
   updateAuthStatus(currentStatus: boolean) {
     this.isAuth = currentStatus;
   }
-  async makeADeal(form: NgForm) {
+  async makeADealAsync(form: NgForm) {
     
     var ret= await this.http.post<MakeADealResponse>(BACKEND_URL+'offers/makeADeal', {
         deallerName: this.dataContainer.deallerName,
@@ -50,10 +50,10 @@ export class BackendAccessService {
         wantedAmount: form.form.controls['Amount'].value,
         type: form.form.controls['OfferType'].value
       });
-    ret.subscribe((res) => { this.makeADealResponse = res;})
+    
     return ret;
   }
-  async onLogin(id: number) {
+  async onLoginAsync(id: number) {
     var loginResponse=await this.http.get<dealler>(BACKEND_URL+'dealler/' + id);
     loginResponse.subscribe(data=> {
       this.setAuthValue(data!=null)
