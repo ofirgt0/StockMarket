@@ -1,4 +1,3 @@
-
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 
 <div class="container">
@@ -13,52 +12,22 @@
                     <img src="assets/deallerAvatar/{{dealler.name}}.png" class="shadow rounded-circle profilePic center" width="10%">
                      <div class="profile-header-info">
                         <h4 class="m-t-10 m-b-5 center" >{{dealler.id}} | {{dealler.name}}</h4>
-                        <p class="m-b-10 center">{{dealler.currMoney | currency }}</p>
+                        <p class="m-b-10 center" style="font-size: 200%;">{{dealler.currMoney | currency }}</p>
                      </div>
                   </div>
                   <ul class="profile-header-tab nav nav-tabs">
-                     <li class="nav-item"><a class="nav-link active show" data-toggle="tab">Purchase History</a></li>
-                     <li class="nav-item"><a class="nav-link" data-toggle="tab">Holdings</a></li>
+                     <li class="nav-item"><a class=" active show" (click)="showDeals(true)" data-toggle="tab">Purchase History</a></li>
+                     <li class="nav-item"><a class="show pointer" (click)="showDeals(false)" data-toggle="tab">Holdings</a></li>
                   </ul>
                </div>
             </div>
 
             <div class="profile-content">
-               <div class="tab-content p-0">
-                  <div class="tab-pane fade active show" id="profile-post">
-                     <span *ngIf="noDeals"> No transactions have been made yet</span>
-                     <ul class="timeline" style="margin: 0;" *ngFor="let deal of deallerDeals.slice().reverse()">
-                        
-                        <li>
-                           <div class="timeline-time">
-                              <span class="date">{{deal["dealTime"]|slice: 0:10}}</span>
-                              <span class="date">{{deal["dealTime"]|dateAsAgo}}</span>
-                           </div>
-                           <div class="timeline-icon">
-                              <a href="javascript:;">&nbsp;</a>
-                           </div>
-                           <div class="timeline-body">
-                              <div class="timeline-header">
-                                 <span>
-                                    <span class="userimage shadow"><img src="assets/deallerAvatar/{{deal.buyer}}.png" class="shadow"></span>
-                                    <span class="username">{{deal.buyer}}</span>
-                                 </span>
-                                 <span class="justify-content" style="margin-left: 29%;font-size: 120%;">
-                                    bought from
-                                 </span>
-                                 <span class="pull-right">
-                                    <span class="userimage"><img src="assets/deallerAvatar/{{deal.seller}}.png" alt=""></span>
-                                 <span class="username">{{deal.seller}}</span>
-                                 <span class="pull-right text-muted"></span>
-                                 </span>
-                              </div>
-                              <div class="timeline-content center">
-                                 <p style="font-size: 120%;">{{deal.amount}} {{deal.stockName}} Stock's for {{deal.price*deal.amount | currency}}</p>
-                              </div>
-                           </div>
-                        </li>
-                     </ul>
-                  </div>
+               <div class="tab-content p-0" *ngIf="historyView">
+                  <app-deals-view></app-deals-view>
+               </div>
+               <div class="tab-content p-0" *ngIf="!historyView">
+                  <app-holdings-view></app-holdings-view>
                </div>
             </div>
          </div>

@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Backend.Core;
 using System.Collections.Concurrent;
 using Backend.Helpers;
-using static Backend.Helpers.OfferTypeClass;
 using Backend.Entities;
 
 namespace Backend.Controllers
@@ -82,13 +81,18 @@ namespace Backend.Controllers
             return ret;
         }
         [HttpGet("deals/{name}")]
-        public async Task<ActionResult<List<Deal>>> GetDeallerDeals(string name)
+        public async Task<ActionResult<List<Deal>>> GetDeallerDealsAsync(string name)
         {
             List<Deal> ret = _stockMarketData.GetDeallerDeals(name);
             
             return ret;
         }
-
+        [HttpGet("stocks/worth/{name}")]
+        public async Task<ActionResult<HoldingsWorth>> GetDeallerHoldingsWorthAsync(string name)
+        {
+            HoldingsWorth ret = _stockMarketData.GetDeallersWorth(name);
+            return ret;
+        }
 
     }
 }

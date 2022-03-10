@@ -1,9 +1,9 @@
 
-<form (ngSubmit)= "onSubmit(f)" #f="ngForm" >
+<form (ngSubmit)= "onSubmitAsync(f)" #f="ngForm" >
     <div class="container shadow-lg">
-        <br>
+        <br/>
         <div class="input-group mb-3 container" style="margin-top: 2 px;">
-            <div class="input-group-prepend ">
+            <div class="input-group-prepend">
                 <label class="input-group-text"  for="inputGroupSelect01">I want to</label>
             </div>
             <select class="custom-select " id="OfferType" style="display:inline-block;" ngModel name="OfferType" required>
@@ -26,20 +26,20 @@
             </div>
             <div style="width: 48%;display:inline-block;" class="form-group">
                 <label for="formControlRange">choose price</label>
-                <mat-slider thumbLabel [displayWith]="formatLabelK" tickInterval="1000" step="1000" 
-                min="0" max="100000" aria-label="units" ngModel name="Price" required></mat-slider>
+                <mat-slider thumbLabel onchange="amount.value=amountSlider.value" [displayWith]="formatLabelK" tickInterval="1000" step="1000" 
+                min="0" max="500000" aria-label="units" id="amountSlider" ngModel name="Price" value="10000" required></mat-slider>
             </div>
         </div>
         <button type="button" type="submit" [disabled]="!f.valid" 
         class="btn btn-primary btn-lg btn-block pink" >Get Your Deal!</button>
-        <br>
-        <br>
+        <br/>
+        <br/>
     </div>
 </form>
 
-<br>
-<br>
-<br>
+<br/>
+<br/>
+<br/>
 
 
   

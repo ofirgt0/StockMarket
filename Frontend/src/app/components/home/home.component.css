@@ -31,3 +31,19 @@ table {
     width: 60%;
     padding: 10px;
   }
+  .twoDivInRow {
+    width: 40%;
+    padding: 20px;
+    display: inline-block;
+  }
+  div.sticky {
+    position: -webkit-sticky;
+    
+    position: sticky;
+    right: 0;
+    
+   
+  }
+  .colWidth{
+    width: 10%
+  }

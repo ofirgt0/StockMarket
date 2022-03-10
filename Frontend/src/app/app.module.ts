@@ -10,16 +10,17 @@ import { MenuComponent } from './components/menu/menu.component';
 import { HomeComponent } from './components/home/home.component';
 import { DeallersComponent } from './components/deallers/deallers.component';
 import { AppRoutingModule } from './app-routing.module';
-import { AuthComponent } from './auth/auth.component';
-import { DeallerCardComponent } from './components/deallers/dealler-card/dealler-card.component';
 import { RoundBigNumbersPipe } from './Pipes/RoundBigNumbers';
 import { MakeADealComponent } from './components/home/make-adeal/make-adeal.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatBadgeModule } from '@angular/material/badge';
 import { ChartComponent } from './components/home/chart/chart.component';
 import { NgbToastModule } from  'ngb-toast';
 import { ToastrModule } from 'ngx-toastr';
 import { DateAsAgoPipe } from './Pipes/dateAsAgo';
+import { DealsViewComponent } from './components/dealler/deals-view/deals-view.component';
+import { HoldingsViewComponent } from './components/dealler/holdings-view/holdings-view.component';
 
 const appRoutes: Routes = [
   {path:'' , component: HomeComponent},
@@ -37,11 +38,11 @@ const appRoutes: Routes = [
     MenuComponent,
     HomeComponent,
     DeallersComponent,
-    AuthComponent,
-    DeallerCardComponent,
     MakeADealComponent,
     ChartComponent,
-    
+    DealsViewComponent,
+    HoldingsViewComponent,
+    ChartComponent
              
   ],
   imports: [
@@ -50,6 +51,7 @@ const appRoutes: Routes = [
     BrowserAnimationsModule,
     HttpClientModule,
     MatSliderModule,
+    MatBadgeModule ,
     NgbToastModule,
     AppRoutingModule,
     RouterModule.forRoot(appRoutes)

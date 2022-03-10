@@ -1,0 +1,51 @@
+<div class="container">
+    <div class="main-body">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-column align-items-center text-center">
+                            <img src="assets\currencyStatus\profit.JPG" class="rounded-circle p-1 bg-primary" width="110">
+                            <div class="mt-3">
+                                <h4 class="bold">Total Worth</h4>
+                            </div>
+                        </div>
+                        <hr class="my-4">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                <h5 class="text-secondary mb-1">Current Money:</h5>
+                                <span class="text-secondary bold" >{{deallerHoldings.currMoney | RoundBigNumbers}}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                <h5 class="text-secondary mb-1">Money At Opening:</h5>
+                                <span class="text-secondary bold">{{deallerHoldings.moneyAtOpening | RoundBigNumbers}}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                <h5 class="text-secondary mb-1">Total Owned Stock Worth:</h5>
+                                <span class="text-secondary bold" >{{deallerHoldings.totalWorth | RoundBigNumbers}}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="d-flex align-items-center mb-3">Stocks you own relative to the IPO </h5>
+                                <div *ngFor="let stock of stocksWithAmount">
+                                    <img src="assets/stocksLogo/{{ stock.stock.name }}.jpg" width="10%" />
+                                    <div class="progress mb-3" style="height: 5px">
+                                        <div class="progress-bar bg-primary" role="progressbar" id="progress-bar" [style.width]="(stock.amount/stock.stock.amount)*100 + '%'"  aria-valuenow="80" aria-valuemin="0" aria-valuemax="1000"></div>
+                                    </div>
+                                    <!-- לשאול את יצחקי איך הוא מצפה שאוריד את הסטייל כמו פה -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

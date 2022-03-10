@@ -7,13 +7,17 @@ export interface stock {
   percentageDifference: number[];
   imgUrl?: string;
 }
+export interface stockWithAmount {
+  stock: stock;
+  amount: number;
 
+}
 export interface dealler {
   id: number;
   name: string;
   moneyAtOpening: number;
   currMoney: number;
-  ownedStocks: Array<stock>;
+  ownedStocks: Array<stockWithAmount>;
   ownedStocksAmount:number;
 }
 
@@ -42,7 +46,14 @@ export enum ActionPerformedType
 }
 export interface MakeADealResponse
 {
-    QuantityRemaining:number;
+    quantityRemaining:number;
     action:ActionPerformedType ;
+}
+export interface HoldingsWorth
+{
+    totalWorth:number;
+    ownedStockWorth:any;
+    moneyAtOpening:number ;
+    currMoney:number;
 }
 

@@ -31,6 +31,8 @@ namespace Backend.Core
 
         public Stock GetStockById(int id);
 
+        public HoldingsWorth GetDeallersWorth(string name);
+
         public Dealler GetDeallerById(int id);
 
         public void UpdateOffers();

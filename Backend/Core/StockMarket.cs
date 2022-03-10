@@ -76,7 +76,7 @@ namespace Backend
             var relevantLoker = (toExcute.Type == OfferType.buyingOffer) ? _sellersLocker : _buyerLocker;
             int oldAmount = toExcute.OfferStockAmount;
 
-            if (!IsValidOffer(toExcute)) return new MakeADealResponse(toExcute.OfferStockAmount+1, oldAmount);
+            if (!IsValidOffer(toExcute)) return new MakeADealResponse(toExcute.OfferStockAmount + 1, oldAmount);
             lock (relevantLoker)
             {
                 IEnumerable<KeyValuePair<string, Offer>> filterOffers = toSearchOn
@@ -105,9 +105,9 @@ namespace Backend
                 offer.Value.OfferStockAmount -= diffrence;
                 toExcute.OfferStockAmount -= diffrence;
                 if (offer.Value.OfferStockAmount == 0) toSearchOn.TryRemove(offer);
-                minPrice=Math.Min(toExcute.WantedPrice, offer.Value.WantedPrice);
-                TransferPropertiesBetweenDealers(offer.Value.Owner.Name, toExcute.Owner.Name,minPrice , diffrence, toExcute.Stock.Name);
-                UpdateHistory(toExcute.Stock.Name,toExcute, offer.Value.Owner, false, diffrence,minPrice);
+                minPrice = Math.Min(toExcute.WantedPrice, offer.Value.WantedPrice);
+                TransferPropertiesBetweenDealers(offer.Value.Owner.Name, toExcute.Owner.Name, minPrice, diffrence, toExcute.Stock.Name);
+                UpdateHistory(toExcute.Stock.Name, toExcute, offer.Value.Owner, false, diffrence, minPrice);
             }
         }
 
@@ -141,16 +141,16 @@ namespace Backend
         {
             double percentageDifference = (stock.CurrentPrice > price) ? (stock.CurrentPrice / price) : ((price / stock.CurrentPrice));
             stock.CurrentPrice = price;
-            stock.PercentageDifference.Push(Math.Round(percentageDifference,2));
+            stock.PercentageDifference.Push(Math.Round(percentageDifference, 2));
         }
 
         public void UpdateHistory(string stockName, Offer offerToAdd, Dealler dealler, bool deallerIsBuyer, int amount, double price)
         {
             Deal dealToAdd;
             if (!(offerToAdd.Type == OfferType.buyingOffer))
-                dealToAdd = new Deal(stockName,offerToAdd.Owner.Name, dealler.Name, price, amount);
+                dealToAdd = new Deal(stockName, offerToAdd.Owner.Name, dealler.Name, price, amount);
             else
-                dealToAdd = new Deal(stockName,dealler.Name, offerToAdd.Owner.Name, price, amount);
+                dealToAdd = new Deal(stockName, dealler.Name, offerToAdd.Owner.Name, price, amount);
 
             DeallersHistory[dealler.Name].Add(dealToAdd);
             DeallersHistory[offerToAdd.Owner.Name].Add(dealToAdd);
@@ -251,7 +251,6 @@ namespace Backend
         {
             return Deallers.FirstOrDefault(d => d.Id == id);
         }
-
         public void UpdateOffers()
         {
             double latestStockValueUpdate;
@@ -278,5 +277,20 @@ namespace Backend
         {
             return DeallersHistory[name];
         }
+
+        public HoldingsWorth GetDeallersWorth(string name)
+        {
+            Dealler dealler = GetDeallerByName(name);
+            HoldingsWorth holdings = new HoldingsWorth(0,dealler.MoneyAtOpening,dealler.CurrMoney);
+            double totalHoldingsWorth=0;
+            foreach (var stockWithAmount in dealler.OwnedStocks)
+            {
+                totalHoldingsWorth += stockWithAmount.Amount * stockWithAmount.Stock.CurrentPrice;
+                holdings.OwnedStockWorth.TryAdd(stockWithAmount.Stock.Name,stockWithAmount.Stock.CurrentPrice*stockWithAmount.Amount);
+            }
+            holdings.TotalWorth=totalHoldingsWorth;
+            return holdings;
+        }
+
     }
 }

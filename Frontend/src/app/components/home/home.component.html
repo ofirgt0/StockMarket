@@ -1,37 +1,49 @@
-<div>
-  <app-make-adeal *ngIf="isAuth"></app-make-adeal>
-  <table class="center">
-    <tr>
-      <th></th>
-      <th>Stock Name</th>
-      <th>Total Amount</th>
-      <th>Current Price</th>
-      <th>latest Price update</th>
-    </tr>
-
-    <tr *ngFor="let s of stocks">
-      <td style="width: 10%">
-        <img src="assets/stocksLogo/{{ s.name }}.jpg" width="80%" />
-      </td>
-      <td>
-        <a>{{ s.name }}</a>
-      </td>
-      <td>
-        <a>{{ s.amount }}</a>
-      </td>
-      <td
-        [ngClass]="{red: s.percentageDifference[0] < 0,green: s.percentageDifference[0] > 0}"
-      >
-        <a>{{ s.currentPrice | number: "1.2-2" }}</a>
-      </td>
-      <td
-        [ngClass]="{
-          red: s.percentageDifference[0] < 0,
-          green: s.percentageDifference[0] > 0
-        }"
-      >
-        <a>{{ s.percentageDifference | slice: 0:5 }}</a>
-      </td>
-    </tr>
-  </table>
+<app-make-adeal *ngIf="isAuth"></app-make-adeal>
+  
+<div class="container">
+      <div class="row shadow main-body">
+          <div class="col-lg-4">
+              <div class="card">
+                  <div class="card-body">
+                      <table>
+                        <tr>
+                          <th></th>
+                          <th>Stock Name</th>
+                          <th>Total Amount</th>
+                          <th>Current Price</th>
+                        </tr>
+                    
+                        <tr *ngFor="let s of stocks">
+                          <td class="colWidth">
+                            <img src="assets/stocksLogo/{{ s.name }}.jpg" width="80%" />
+                          </td>
+                          <td>
+                            <a routerLinkActive="active" routerLink="/" class="nav-link" (click)="showChart(s.name)">{{ s.name }}</a>
+                          </td>
+                          <td>
+                            <a>{{ s.amount }}</a>
+                          </td>
+                          <td [ngClass]="{red: s.percentageDifference[0] < 0,green: s.percentageDifference[0] > 0}">
+                            <a>{{ s.currentPrice | number: "1.2-2" }}</a>
+                          </td>
+                        </tr>
+                      </table>
+                  </div>
+              </div>
+          </div>
+          <div class="col-lg-8">
+              <div class="row shadow">
+                  <div class="col-sm-12">
+                      <div class="card">
+                          <div class="card-body">
+                            <div class="sticky">
+                              <app-chart></app-chart>
+                            </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
 </div>
+

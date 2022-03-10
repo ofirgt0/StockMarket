@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { BackendAccessService } from 'src/app/services/BackendAccess.service';
 @Component({
   selector: 'app-menu',
@@ -23,8 +22,8 @@ export class MenuComponent implements OnInit {
     this.backendAccess.setAuthValue(this.isAuth);
   }
   
-  async deallerLogin(id: any) {
-    const a = await this.backendAccess.onLogin(id);    
+  async deallerLoginAsync(id: any) {
+    const a = await this.backendAccess.onLoginAsync(id);    
     a.subscribe((data) => {
       this.backendAccess.getAuthValue().subscribe(isAuthRet=>this.isAuth=isAuthRet);
       if(data==null){
@@ -37,5 +36,9 @@ export class MenuComponent implements OnInit {
         this.backendAccess.setAuthValue(this.isAuth);
       }
     });
+  }
+  getOfflineDealsCounter(deallerName:string)
+  {
+
   }
 }

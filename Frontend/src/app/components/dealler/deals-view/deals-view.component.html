@@ -1,0 +1,34 @@
+<div class="tab-pane fade active show" id="profile-post">
+    <span *ngIf="noDeals"> No transactions have been made yet</span>
+    <ul class="timeline" *ngFor="let deal of deallerDeals.slice().reverse()">
+        <li>
+            <div class="timeline-time">
+                <span class="date">{{deal["dealTime"]|slice: 0:10}}</span>
+                <span class="date">{{deal["dealTime"]|dateAsAgo}}</span>
+            </div>
+            <div class="timeline-icon">
+                <a href="javascript:;">&nbsp;</a>
+            </div>
+            <div class="timeline-body">
+                <div class="timeline-header">
+                    <span>
+                        <span class="userimage shadow"><img src="assets/deallerAvatar/{{deal.buyer}}.png" class="shadow"></span>
+                        <span class="username">{{deal.buyer}}</span>
+                    </span>
+                    <span class="justify-content deallerListTitle" >
+                        bought from
+                    </span>
+                    <span class="pull-right">
+                        <span class="userimage"><img src="assets/deallerAvatar/{{deal.seller}}.png" alt=""></span>
+                    <span class="username">{{deal.seller}}</span>
+                    <span class="pull-right text-muted"></span>
+                    </span>
+                </div>
+                <div class="timeline-content center">
+                    <p class="contentSize">{{deal.amount}} {{deal.stockName}} Stock's for {{deal.price*deal.amount | currency}}</p>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+ 
